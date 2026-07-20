@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V&amp;A · Explore the Collection</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <title>Chris's "Where the F*** is my Object?"</title>
   <style>
+    @font-face {
+      font-display: swap;
+      font-family: spiller;
+      font-style: normal;
+      font-weight: 100 900;
+      src: url("fonts/Spiller-Upright-weight-VF-Web-V2.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-display: swap;
+      font-family: spillerserif;
+      font-style: normal;
+      font-weight: 100 900;
+      src: url("fonts/SpillerSerif-Upright-weight-VF-Web.woff2") format("woff2");
+    }
+
     :root {
       --bg: #333538;
       --bg-card: #45484b;
@@ -39,7 +52,8 @@
 
     body {
       min-height: 100vh;
-      font-family: "DM Sans", sans-serif;
+      font-family: spiller, arial, helvetica, sans-serif;
+      font-variation-settings: "wght" 400;
       color: var(--text-secondary);
       background: var(--bg);
     }
@@ -71,15 +85,18 @@
     }
 
     .brand {
-      font-family: "DM Sans", sans-serif;
       font-size: clamp(3rem, 10vw, 5.5rem);
       line-height: 0.95;
       letter-spacing: -0.03em;
       color: var(--text);
       font-weight: 600;
+      font-variation-settings: "wght" 600;
     }
 
     .brand em {
+      display: block;
+      margin-top: 0.35em;
+      font-size: 0.5em;
       font-style: normal;
       color: var(--accent);
     }
@@ -116,17 +133,31 @@
       min-width: 0;
     }
 
+    .field-mode {
+      flex: 1 1 100%;
+    }
+
     .field-gallery {
-      flex: 0 1 8.5rem;
+      flex: 1 1 14rem;
+      min-width: 11rem;
+    }
+
+    .search-fields:has(.field-keyword.is-hidden) .field-gallery {
+      flex: 1 1 100%;
     }
 
     .field-keyword {
       flex: 1 1 12rem;
     }
 
+    .field-keyword.is-hidden {
+      display: none;
+    }
+
     .field label {
       font-size: 0.78rem;
       font-weight: 600;
+      font-variation-settings: "wght" 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--ink-soft);
@@ -160,6 +191,31 @@
       background: var(--bg-elevated);
     }
 
+    .search select {
+      width: 100%;
+      padding: 0.95rem 1.15rem;
+      font: inherit;
+      font-size: 1.05rem;
+      color: var(--text);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), opacity 0.25s var(--ease);
+    }
+
+    .search select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(165, 214, 167, 0.2);
+    }
+
+    .search select:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: var(--bg-elevated);
+    }
+
     .search-actions {
       display: flex;
       gap: 0.75rem;
@@ -170,6 +226,7 @@
       font: inherit;
       font-size: 1rem;
       font-weight: 600;
+      font-variation-settings: "wght" 600;
       letter-spacing: 0.02em;
       color: var(--bg);
       background: var(--accent);
@@ -235,11 +292,11 @@
     }
 
     .results-count {
-      font-family: "DM Sans", sans-serif;
       font-size: clamp(1.5rem, 3vw, 2rem);
       letter-spacing: -0.02em;
       color: var(--text);
       font-weight: 600;
+      font-variation-settings: "wght" 600;
     }
 
     .results-count span {
@@ -257,6 +314,7 @@
       font: inherit;
       font-size: 0.9rem;
       font-weight: 500;
+      font-variation-settings: "wght" 500;
       padding: 0.45rem 0.85rem;
       color: var(--text);
       background: var(--bg-elevated);
@@ -323,27 +381,38 @@
       animation: rise 0.55s var(--ease) forwards;
     }
 
-    .item a {
+    .item-card {
       display: flex;
       flex-direction: column;
       height: 100%;
-      color: inherit;
-      text-decoration: none;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: 4px;
       overflow: hidden;
       box-shadow: var(--shadow);
       transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
-      cursor: pointer;
     }
 
-    .item a:hover,
-    .item a:focus-visible {
+    .item-card:hover,
+    .item-card:focus-within {
       transform: translateY(-4px);
       border-color: var(--accent);
       box-shadow: 0 22px 48px rgba(0, 0, 0, 0.35);
-      outline: none;
+    }
+
+    .item-main {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .item-main:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
     }
 
     .thumb {
@@ -362,7 +431,7 @@
       transition: transform 0.55s var(--ease);
     }
 
-    .item a:hover .thumb img {
+    .item-card:hover .thumb img {
       transform: scale(1.04);
     }
 
@@ -376,12 +445,12 @@
     }
 
     .title {
-      font-family: "DM Sans", sans-serif;
       font-size: 1.1rem;
       line-height: 1.25;
       letter-spacing: -0.015em;
       color: var(--text);
       font-weight: 600;
+      font-variation-settings: "wght" 600;
     }
 
     .type,
@@ -398,13 +467,25 @@
       letter-spacing: 0.06em;
       font-size: 0.72rem;
       font-weight: 600;
+      font-variation-settings: "wght" 600;
       color: var(--accent);
     }
 
     .location {
       margin-top: auto;
-      padding-top: 0.35rem;
+      padding: 0.35rem 1rem 1rem;
       font-size: 0.78rem;
+      border-top: 1px dotted var(--border);
+    }
+
+    .location a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .location a:hover {
+      color: var(--accent-hover);
     }
 
     .footer {
@@ -434,6 +515,7 @@
       font: inherit;
       font-size: 0.95rem;
       font-weight: 600;
+      font-variation-settings: "wght" 600;
       letter-spacing: 0.02em;
       color: var(--bg);
       background: var(--accent);
@@ -474,7 +556,8 @@
 
     .detail-title {
       font-size: clamp(1.75rem, 3vw, 2.1rem);
-      font-weight: 600;
+      font-weight: 500;
+      font-variation-settings: "wght" 500;
       color: var(--text);
       line-height: 1.2;
       margin-bottom: 2.5rem;
@@ -483,6 +566,7 @@
     .detail-heading {
       font-size: 1.2rem;
       font-weight: 600;
+      font-variation-settings: "wght" 600;
       color: var(--text);
       margin-bottom: 0.25rem;
     }
@@ -503,6 +587,7 @@
     .detail-label {
       font-size: 0.72rem;
       font-weight: 500;
+      font-variation-settings: "wght" 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-secondary);
@@ -567,6 +652,7 @@
       font: inherit;
       font-size: 0.88rem;
       font-weight: 500;
+      font-variation-settings: "wght" 500;
       cursor: pointer;
       padding: 0;
       margin-top: 1.25rem;
@@ -641,6 +727,7 @@
       color: var(--text);
       font-size: 0.88rem;
       font-weight: 500;
+      font-variation-settings: "wght" 500;
       cursor: default;
     }
 
@@ -668,6 +755,7 @@
       gap: 0.5rem;
       color: var(--text);
       font-weight: 500;
+      font-variation-settings: "wght" 500;
       font-size: 0.95rem;
       line-height: 1.4;
     }
@@ -690,13 +778,13 @@
     }
 
     .detail-location-room a {
-      color: var(--text-secondary);
+      color: var(--accent);
       text-decoration: underline;
       text-underline-offset: 2px;
     }
 
     .detail-location-room a:hover {
-      color: var(--accent);
+      color: var(--accent-hover);
     }
 
     .detail-footnote {
@@ -774,16 +862,22 @@
   <div class="page" id="page">
     <div class="search-view" id="searchView">
     <header class="hero">
-      <h1 class="brand">V&amp;A <em>Explore by Gallery</em></h1>
+      <h1 class="brand">Chris's <em>"Where the F*** is my Object?"</em></h1>
       <p class="lede">
-        Reveal what is on display in each gallery at the Victoria and Albert Museum —
-        Each gallery has a number that appears above the entrance to each gallery, please enter that number below to begin.
+        Need to know where an object is and already know it's museum number? or have a gallery number and you want to find out what's on display? Then your in the right place!
       </p>
 
       <form class="search" id="searchForm" role="search">
         <div class="search-fields">
+          <div class="field field-mode">
+            <label for="searchMode">Search by</label>
+            <select id="searchMode" name="searchMode">
+              <option value="gallery">Gallery number</option>
+              <option value="museum">Museum number</option>
+            </select>
+          </div>
           <div class="field field-gallery">
-            <label for="galleryInput">Gallery number</label>
+            <label for="galleryInput" id="primarySearchLabel">Gallery number</label>
             <input
               type="text"
               id="galleryInput"
@@ -794,7 +888,7 @@
               required
             >
           </div>
-          <div class="field field-keyword">
+          <div class="field field-keyword" id="keywordField">
             <label for="keywordInput">Keyword</label>
             <input
               type="search"
@@ -811,7 +905,7 @@
         </div>
       </form>
 
-      <p class="hint">
+      <p class="hint" id="galleryHint">
         Try gallery
         <button type="button" data-gallery="71" data-keyword="vase">71a + vase</button>,
         <button type="button" data-gallery="139" data-keyword="">139</button>,
@@ -864,10 +958,102 @@
     const GALLERY_CLUSTERS =
       "https://api.vam.ac.uk/v2/objects/clusters/gallery/search";
     const PAGE_SIZE = 24;
+    const MUSEUM_SEARCH_PAGE_SIZE = 100;
     const IIIF = (id, size = 400) =>
       `https://framemark.vam.ac.uk/collections/${id}/full/!${size},${size}/0/default.jpg`;
     const OBJECT_URL = (systemNumber) =>
       `https://collections.vam.ac.uk/item/${systemNumber}/`;
+    const MAP_BASE = "https://www.vam.ac.uk/features/digitalmap";
+    const MAP_FLOORS_JSON = `${MAP_BASE}/json/all_floors.json`;
+    const MAP_SITE = { VA: "south-kensington" };
+
+    let mapFloorsByNumericId = null;
+    let mapFloorsLoadPromise = null;
+
+    function thesNumericId(thesId) {
+      const match = /^THES(\d+)$/i.exec(String(thesId || "").trim());
+      return match ? match[1] : null;
+    }
+
+    async function loadMapFloorsIndex() {
+      if (mapFloorsByNumericId) return mapFloorsByNumericId;
+      if (!mapFloorsLoadPromise) {
+        mapFloorsLoadPromise = fetch(MAP_FLOORS_JSON)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Map floors lookup failed (${response.status})`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const index = new Map();
+            for (const entry of data) {
+              const id = entry?.id;
+              if (!id) continue;
+              const suffix = /^FAC\d+_(\d+)$/.exec(id);
+              if (!suffix) continue;
+              const num = suffix[1];
+              if (!index.has(num)) index.set(num, []);
+              index.get(num).push(entry);
+            }
+            mapFloorsByNumericId = index;
+            return index;
+          })
+          .catch((error) => {
+            console.warn(error);
+            mapFloorsByNumericId = new Map();
+            return mapFloorsByNumericId;
+          });
+      }
+      return mapFloorsLoadPromise;
+    }
+
+    function resolveMapRoomId(location) {
+      if (!mapFloorsByNumericId) return null;
+      const num = thesNumericId(location?.id);
+      if (!num) return null;
+      const candidates = mapFloorsByNumericId.get(num);
+      if (!candidates?.length) return null;
+      if (candidates.length === 1) return candidates[0].id;
+
+      const mapSite = MAP_SITE[location?.site] || "south-kensington";
+      let pool = candidates.filter((entry) => entry.site === mapSite);
+      if (!pool.length) pool = candidates;
+
+      const mainGallery = pool.find((entry) => entry.id.startsWith("FAC0000_"));
+      return (mainGallery || pool[0]).id;
+    }
+
+    function defaultMapRoomId(location) {
+      const num = thesNumericId(location?.id);
+      if (!num) return null;
+      if (location?.site && location.site !== "VA") return null;
+      return `FAC0000_${num}`;
+    }
+
+    function mapUrlForLocation(location) {
+      if (!location?.onDisplay || location.type !== "display") return null;
+      const roomId = resolveMapRoomId(location) || defaultMapRoomId(location);
+      if (!roomId) return null;
+      return `${MAP_BASE}/find/room/${roomId}`;
+    }
+
+    function currentLocationForObject(record, summary) {
+      const loc = summary?._currentLocation;
+      if (!loc) return null;
+      if (thesNumericId(loc.id)) return loc;
+      const fromRecord = (record?.galleryLocations || []).find(
+        (entry) => entry?.current?.id
+      )?.current;
+      if (fromRecord?.id) {
+        return {
+          ...loc,
+          id: fromRecord.id,
+          displayName: loc.displayName || fromRecord.text || "",
+        };
+      }
+      return loc;
+    }
 
     const page = document.getElementById("page");
     const detailSection = document.getElementById("detailSection");
@@ -875,8 +1061,12 @@
     const detailBack = document.getElementById("detailBack");
 
     const form = document.getElementById("searchForm");
+    const searchMode = document.getElementById("searchMode");
+    const primarySearchLabel = document.getElementById("primarySearchLabel");
     const galleryInput = document.getElementById("galleryInput");
     const keywordInput = document.getElementById("keywordInput");
+    const keywordField = document.getElementById("keywordField");
+    const galleryHint = document.getElementById("galleryHint");
     const searchBtn = document.getElementById("searchBtn");
     const gallery = document.getElementById("gallery");
     const statusMessage = document.getElementById("statusMessage");
@@ -885,6 +1075,8 @@
     const resultsCount = document.getElementById("resultsCount");
 
     let state = {
+      searchMode: "gallery",
+      museumQuery: null,
       keyword: "",
       room: null,
       galleryId: null,
@@ -919,7 +1111,32 @@
       return match ? match[1].toLowerCase() : null;
     }
 
-    function syncKeywordField() {
+    function isMuseumSearchMode() {
+      return searchMode.value === "museum";
+    }
+
+    function syncSearchFields() {
+      const museumMode = isMuseumSearchMode();
+
+      keywordField.classList.toggle("is-hidden", museumMode);
+      galleryHint.hidden = museumMode;
+
+      if (museumMode) {
+        primarySearchLabel.textContent = "Museum number";
+        galleryInput.placeholder = "e.g. 54:1,2-2008 or full museum number";
+        keywordInput.disabled = true;
+        keywordInput.value = "";
+
+        const query = galleryInput.value.trim();
+        galleryInput.setCustomValidity(
+          query ? "" : "Enter a museum number such as E.1691-1949."
+        );
+        return;
+      }
+
+      primarySearchLabel.textContent = "Gallery number";
+      galleryInput.placeholder = "e.g. 71";
+
       const room = parseRoomNumber(galleryInput.value);
       const canUseKeyword = Boolean(room);
 
@@ -943,10 +1160,11 @@
       searchBtn.disabled = isLoading;
       searchBtn.textContent = isLoading ? "Searching…" : "Search";
       galleryInput.disabled = isLoading;
+      searchMode.disabled = isLoading;
       if (isLoading) {
         keywordInput.disabled = true;
       } else {
-        syncKeywordField();
+        syncSearchFields();
       }
     }
 
@@ -956,6 +1174,9 @@
     }
 
     function goToPage(page) {
+      if (state.searchMode === "museum") {
+        return;
+      }
       search({
         room: state.room,
         keyword: state.keyword,
@@ -992,6 +1213,17 @@
 
     function locationFor(object) {
       return object._currentLocation?.displayName || "";
+    }
+
+    function locationMarkupForObject(object) {
+      const displayName = locationFor(object);
+      if (!displayName) return "";
+      const mapUrl = mapUrlForLocation(object._currentLocation);
+      const label = escapeHtml(displayName);
+      const inner = mapUrl
+        ? `<a href="${mapUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`
+        : label;
+      return `<p class="location">${inner}</p>`;
     }
 
     function siteLabel(site) {
@@ -1239,12 +1471,17 @@
       const thumbIds = uniqueImages.slice(1, 3);
       const extraCount = Math.max(uniqueImages.length - 3, 0);
 
-      const location = summary?._currentLocation;
+      const location = currentLocationForObject(record, summary);
       const onDisplay = location?.onDisplay;
       const statusLabel = onDisplay ? "On display" : "Not on display";
 
       const siteName = siteLabel(location?.site);
       const roomName = location?.displayName || "";
+      const mapUrl = mapUrlForLocation(location);
+      const roomLabel = escapeHtml(roomName);
+      const roomInner = mapUrl
+        ? `<a href="${mapUrl}" target="_blank" rel="noopener noreferrer">${roomLabel}</a>`
+        : `<span>${roomLabel}</span>`;
 
       detailContent.innerHTML = `
         <div class="detail-grid">
@@ -1291,7 +1528,7 @@
                       roomName
                         ? `<div class="detail-location-room">
                             ${ARROW_ICON}
-                            <a href="${OBJECT_URL(summary.systemNumber)}" target="_blank" rel="noopener">${escapeHtml(roomName)}</a>
+                            ${roomInner}
                           </div>`
                         : ""
                     }
@@ -1336,7 +1573,10 @@
       }
 
       try {
-        const response = await fetch(`${OBJECT_API}${systemNumber}`);
+        const [response] = await Promise.all([
+          fetch(`${OBJECT_API}${systemNumber}`),
+          loadMapFloorsIndex(),
+        ]);
         if (!response.ok) {
           throw new Error(`Object lookup failed (${response.status})`);
         }
@@ -1344,6 +1584,7 @@
         renderDetail(data.record || {}, summary);
       } catch (error) {
         console.error(error);
+        await loadMapFloorsIndex();
         renderDetail({}, summary);
       }
     }
@@ -1431,37 +1672,35 @@
         const maker = object._primaryMaker?.name || "";
         const date = object._primaryDate || "";
         const type = object.objectType || "";
-        const location = locationFor(object);
         const img = imageFor(object);
+        const locationMarkup = locationMarkupForObject(object);
 
         const li = document.createElement("li");
         li.className = "item";
         li.style.animationDelay = `${Math.min(index, 16) * 35}ms`;
 
         li.innerHTML = `
-          <a href="#object/${object.systemNumber}" data-system-number="${object.systemNumber}">
-            <div class="thumb">
-              ${
-                img
-                  ? `<img src="${img}" alt="" loading="lazy" width="400" height="400">`
-                  : ""
-              }
-            </div>
-            <div class="meta">
-              ${type ? `<p class="type">${escapeHtml(type)}</p>` : ""}
-              <h3 class="title">${escapeHtml(title)}</h3>
-              ${maker ? `<p class="maker">${escapeHtml(maker)}</p>` : ""}
-              ${date ? `<p class="date">${escapeHtml(date)}</p>` : ""}
-              ${
-                location
-                  ? `<p class="location">${escapeHtml(location)}</p>`
-                  : ""
-              }
-            </div>
-          </a>
+          <div class="item-card">
+            <a href="#object/${object.systemNumber}" class="item-main" data-system-number="${object.systemNumber}">
+              <div class="thumb">
+                ${
+                  img
+                    ? `<img src="${img}" alt="" loading="lazy" width="400" height="400">`
+                    : ""
+                }
+              </div>
+              <div class="meta">
+                ${type ? `<p class="type">${escapeHtml(type)}</p>` : ""}
+                <h3 class="title">${escapeHtml(title)}</h3>
+                ${maker ? `<p class="maker">${escapeHtml(maker)}</p>` : ""}
+                ${date ? `<p class="date">${escapeHtml(date)}</p>` : ""}
+              </div>
+            </a>
+            ${locationMarkup}
+          </div>
         `;
 
-        li.querySelector("a").addEventListener("click", (event) => {
+        li.querySelector(".item-main").addEventListener("click", (event) => {
           event.preventDefault();
           openDetail(object.systemNumber);
         });
@@ -1471,9 +1710,10 @@
 
       const count = info.record_count ?? records.length;
       const exact = info.record_count_exact ? "" : "≈";
-      const galleryLabel = state.galleryName
-        ? ` in <span>${escapeHtml(state.galleryName)}</span>`
-        : "";
+      const galleryLabel =
+        state.searchMode === "gallery" && state.galleryName
+          ? ` in <span>${escapeHtml(state.galleryName)}</span>`
+          : "";
       resultsCount.innerHTML = `<span>${exact}${count.toLocaleString()}</span> objects${galleryLabel}`;
       resultsHead.classList.add("is-visible");
 
@@ -1491,6 +1731,8 @@
       const trimmedKeyword = String(keyword || "").trim();
 
       state = {
+        searchMode: "gallery",
+        museumQuery: null,
         keyword: trimmedKeyword,
         room: parsedRoom,
         galleryId,
@@ -1500,7 +1742,7 @@
       };
 
       galleryInput.value = parsedRoom;
-      syncKeywordField();
+      syncSearchFields();
       keywordInput.value = trimmedKeyword;
 
       gallery.innerHTML = "";
@@ -1561,6 +1803,7 @@
         }
 
         showStatus("");
+        await loadMapFloorsIndex();
         renderRecords(records, info);
 
         document.getElementById("resultsSection").scrollIntoView({
@@ -1579,10 +1822,124 @@
       }
     }
 
-    galleryInput.addEventListener("input", syncKeywordField);
+    function resetResultsUi() {
+      gallery.innerHTML = "";
+      resultsHead.classList.remove("is-visible");
+      resultsFoot.classList.remove("is-visible");
+      document.querySelectorAll("[data-pager]").forEach((pager) => {
+        pager.hidden = true;
+      });
+    }
+
+    async function fetchObjectSearch(searchParams) {
+      const params = new URLSearchParams(searchParams);
+      const response = await fetch(`${API}?${params}`);
+      if (!response.ok) {
+        throw new Error(`API responded with ${response.status}`);
+      }
+      return response.json();
+    }
+
+    function museumNumberText(record) {
+      return record.accessionNumber || record.museumNumber || "";
+    }
+
+    /** Keep objects whose museum/accession number contains the query (or exact system id). */
+    function recordsMatchingMuseumQuery(records, query) {
+      const needle = String(query || "").trim().toLowerCase();
+      if (!needle) return [];
+
+      return (records || []).filter((record) => {
+        const accession = museumNumberText(record).toLowerCase();
+        if (accession.includes(needle)) return true;
+        const system = (record.systemNumber || "").toLowerCase();
+        return system === needle;
+      });
+    }
+
+    async function searchByMuseumNumber(raw) {
+      const query = String(raw || "").trim();
+      if (!query) {
+        syncSearchFields();
+        galleryInput.reportValidity();
+        return;
+      }
+
+      state = {
+        searchMode: "museum",
+        museumQuery: query,
+        keyword: "",
+        room: null,
+        galleryId: null,
+        galleryName: null,
+        page: 1,
+        pages: 1,
+      };
+
+      galleryInput.value = query;
+      syncSearchFields();
+
+      resetResultsUi();
+      setLoading(true);
+      showStatus(`Searching museum numbers containing “${query}”…`);
+
+      try {
+        let data = await fetchObjectSearch({
+          page: "1",
+          page_size: String(MUSEUM_SEARCH_PAGE_SIZE),
+          q: query,
+        });
+        let records = recordsMatchingMuseumQuery(data.records, query);
+
+        if (!records.length && /^O\d+$/i.test(query)) {
+          data = await fetchObjectSearch({
+            page: "1",
+            page_size: String(MUSEUM_SEARCH_PAGE_SIZE),
+            kw_system_number: query,
+          });
+          records = data.records || [];
+        }
+
+        if (!records.length) {
+          showStatus(
+            `No object matched museum number “${query}”. Check the number on the object label and try again.`
+          );
+          resultsCount.textContent = "";
+          return;
+        }
+
+        const info = {
+          ...(data.info || {}),
+          record_count: records.length,
+          record_count_exact: true,
+          pages: 1,
+        };
+
+        showStatus("");
+        await loadMapFloorsIndex();
+        renderRecords(records, info);
+
+        document.getElementById("resultsSection").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      } catch (error) {
+        console.error(error);
+        showStatus("Could not reach the V&A API. Check your connection and try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    galleryInput.addEventListener("input", syncSearchFields);
+    searchMode.addEventListener("change", syncSearchFields);
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (isMuseumSearchMode()) {
+        searchByMuseumNumber(galleryInput.value);
+        return;
+      }
       search({
         room: galleryInput.value,
         keyword: keywordInput.value,
@@ -1614,6 +1971,8 @@
 
     document.querySelectorAll("[data-gallery]").forEach((btn) => {
       btn.addEventListener("click", () => {
+        searchMode.value = "gallery";
+        syncSearchFields();
         search({
           room: btn.dataset.gallery,
           keyword: btn.dataset.keyword || "",
@@ -1622,7 +1981,8 @@
       });
     });
 
-    syncKeywordField();
+    syncSearchFields();
+    loadMapFloorsIndex();
   </script>
 </body>
 </html>
