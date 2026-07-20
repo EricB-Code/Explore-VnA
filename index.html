@@ -1831,6 +1831,16 @@
       });
     }
 
+    function clearSearchResults() {
+      resetResultsUi();
+      showStatus("");
+      resultsCount.textContent = "";
+      recordCache.clear();
+      if (page.classList.contains("is-detail")) {
+        closeDetail();
+      }
+    }
+
     async function fetchObjectSearch(searchParams) {
       const params = new URLSearchParams(searchParams);
       const response = await fetch(`${API}?${params}`);
@@ -1932,7 +1942,10 @@
     }
 
     galleryInput.addEventListener("input", syncSearchFields);
-    searchMode.addEventListener("change", syncSearchFields);
+    searchMode.addEventListener("change", () => {
+      clearSearchResults();
+      syncSearchFields();
+    });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
