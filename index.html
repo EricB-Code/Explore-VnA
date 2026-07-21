@@ -862,7 +862,7 @@
   <div class="page" id="page">
     <div class="search-view" id="searchView">
     <header class="hero">
-      <h1 class="brand">Chris's <em>"Where the F*** is my Object?"</em></h1>
+      <h1 class="brand" id="brandTitle">V&amp;A <em>"What's on display in this Gallery?"</em></h1>
       <p class="lede">
         Need to know where an object is and already know it's museum number? or have a gallery number and you want to find out what's on display? Then your in the right place!
       </p>
@@ -907,7 +907,7 @@
 
       <p class="hint" id="galleryHint">
         Try gallery
-        <button type="button" data-gallery="71" data-keyword="vase">71a + vase</button>,
+        <button type="button" data-gallery="71a" data-keyword="vase">71a + vase</button>,
         <button type="button" data-gallery="139" data-keyword="">139</button>,
         <button type="button" data-gallery="67" data-keyword="silver">67 + silver</button>,
         <button type="button" data-gallery="50b" data-keyword="">50b</button>
@@ -1067,6 +1067,7 @@
     const keywordInput = document.getElementById("keywordInput");
     const keywordField = document.getElementById("keywordField");
     const galleryHint = document.getElementById("galleryHint");
+    const brandTitle = document.getElementById("brandTitle");
     const searchBtn = document.getElementById("searchBtn");
     const gallery = document.getElementById("gallery");
     const statusMessage = document.getElementById("statusMessage");
@@ -1117,6 +1118,10 @@
 
     function syncSearchFields() {
       const museumMode = isMuseumSearchMode();
+
+      brandTitle.innerHTML = museumMode
+        ? `Chris's <em>"Where the F*** is my Object?"</em>`
+        : `V&amp;A <em>"What's on display in this Gallery?"</em>`;
 
       keywordField.classList.toggle("is-hidden", museumMode);
       galleryHint.hidden = museumMode;
@@ -1943,6 +1948,8 @@
 
     galleryInput.addEventListener("input", syncSearchFields);
     searchMode.addEventListener("change", () => {
+      galleryInput.value = "";
+      keywordInput.value = "";
       clearSearchResults();
       syncSearchFields();
     });
