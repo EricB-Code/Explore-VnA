@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris's "Where the F*** is my Object?"</title>
+  <title>Explore the V&A Collection</title>
   <style>
     @font-face {
       font-display: swap;
@@ -129,7 +129,7 @@
     .field {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.5rem;
       min-width: 0;
     }
 
@@ -142,8 +142,87 @@
       min-width: 11rem;
     }
 
-    .search-fields:has(.field-keyword.is-hidden) .field-gallery {
+    .search-fields:has(.field-keyword.is-hidden):not(.is-collections) .field-gallery {
       flex: 1 1 100%;
+    }
+
+    .field-explore {
+      flex: 1 1 12rem;
+      min-width: 10rem;
+    }
+
+    .field-explore[hidden] {
+      display: none;
+    }
+
+    .search-fields.is-collections {
+      display: grid;
+      grid-template-columns: minmax(11rem, 13.5rem) minmax(0, 1fr);
+      column-gap: 0;
+      row-gap: 0.75rem;
+      max-width: 36rem;
+      align-items: start;
+    }
+
+    .search-fields.is-collections .field-mode {
+      grid-column: 1 / -1;
+    }
+
+    .search-fields.is-collections .field-explore {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .search-fields.is-collections .field-gallery {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .search-fields.is-collections .field-explore label,
+    .search-fields.is-collections .field-gallery label {
+      min-height: 1.15rem;
+      line-height: 1.15rem;
+      margin: 0;
+    }
+
+    .search-fields.is-collections .field-explore select,
+    .search-fields.is-collections .field-gallery input {
+      height: 3.1rem;
+      min-height: 3.1rem;
+      max-height: 3.1rem;
+      padding: 0 1.15rem;
+      line-height: 1.25;
+      box-sizing: border-box;
+    }
+
+    .search-fields.is-collections .field-explore select {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+
+    .search-fields.is-collections .field-gallery input {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    @media (max-width: 540px) {
+      .search-fields.is-collections {
+        grid-template-columns: 1fr;
+        row-gap: 0.75rem;
+      }
+
+      .search-fields.is-collections .field-explore,
+      .search-fields.is-collections .field-gallery {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      .search-fields.is-collections .field-explore select,
+      .search-fields.is-collections .field-gallery input {
+        border-radius: 4px;
+        border-right: 1px solid var(--border);
+      }
     }
 
     .field-keyword {
@@ -155,6 +234,8 @@
     }
 
     .field label {
+      display: block;
+      margin: 0;
       font-size: 0.78rem;
       font-weight: 600;
       font-variation-settings: "wght" 600;
@@ -173,6 +254,8 @@
       border: 1px solid var(--border);
       border-radius: 4px;
       outline: none;
+      box-sizing: border-box;
+      line-height: 1.25;
       transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), opacity 0.25s var(--ease);
     }
 
@@ -202,6 +285,8 @@
       border-radius: 4px;
       outline: none;
       cursor: pointer;
+      box-sizing: border-box;
+      line-height: 1.25;
       transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), opacity 0.25s var(--ease);
     }
 
@@ -863,17 +948,29 @@
     <div class="search-view" id="searchView">
     <header class="hero">
       <h1 class="brand" id="brandTitle">V&amp;A <em>"What's on display in this Gallery?"</em></h1>
-      <p class="lede">
+      <p class="lede" id="lede">
       	Do you have a Gallery number and want to know what's on display? or need to know where an object is and already know it's museum number? Then your in the right place!
       </p>
 
       <form class="search" id="searchForm" role="search">
-        <div class="search-fields">
+        <div class="search-fields" id="searchFields">
           <div class="field field-mode">
             <label for="searchMode">Search by</label>
             <select id="searchMode" name="searchMode">
               <option value="gallery">Gallery number</option>
               <option value="museum">Museum number</option>
+              <option value="collections">Collections search</option>
+            </select>
+          </div>
+          <div class="field field-explore" id="exploreFieldWrap" hidden>
+            <label for="exploreField">Focused search</label>
+            <select id="exploreField" name="exploreField">
+              <option value="q">All fields</option>
+              <option value="q_object_name">Title / object type</option>
+              <option value="q_actor">Artist / maker</option>
+              <option value="q_material_technique">Materials / techniques</option>
+              <option value="q_place_name">Place of origin</option>
+              <option value="kw_accession_number">Accession number</option>
             </select>
           </div>
           <div class="field field-gallery">
@@ -1061,13 +1158,17 @@
     const detailBack = document.getElementById("detailBack");
 
     const form = document.getElementById("searchForm");
+    const searchFields = document.getElementById("searchFields");
     const searchMode = document.getElementById("searchMode");
     const primarySearchLabel = document.getElementById("primarySearchLabel");
     const galleryInput = document.getElementById("galleryInput");
     const keywordInput = document.getElementById("keywordInput");
     const keywordField = document.getElementById("keywordField");
+    const exploreFieldWrap = document.getElementById("exploreFieldWrap");
+    const exploreField = document.getElementById("exploreField");
     const galleryHint = document.getElementById("galleryHint");
     const brandTitle = document.getElementById("brandTitle");
+    const lede = document.getElementById("lede");
     const searchBtn = document.getElementById("searchBtn");
     const gallery = document.getElementById("gallery");
     const statusMessage = document.getElementById("statusMessage");
@@ -1078,12 +1179,31 @@
     let state = {
       searchMode: "gallery",
       museumQuery: null,
+      exploreField: "q",
+      exploreQuery: "",
       keyword: "",
       room: null,
       galleryId: null,
       galleryName: null,
       page: 1,
       pages: 1,
+    };
+
+    const LEDE_COPY = {
+      gallery:
+        "Do you have a Gallery number and want to know what's on display? or need to know where an object is and already know it's museum number? Then your in the right place!",
+      museum:
+        "Do you have a Gallery number and want to know what's on display? or need to know where an object is and already know it's museum number? Then your in the right place!",
+      collections: "Search more than 1.3 million objects from the V&A collection.",
+    };
+
+    const EXPLORE_FIELD_LABELS = {
+      q: "all fields",
+      q_object_name: "title or object type",
+      q_actor: "artist or maker",
+      q_material_technique: "materials or techniques",
+      q_place_name: "place of origin",
+      kw_accession_number: "accession number",
     };
 
     let recordCache = new Map();
@@ -1116,17 +1236,43 @@
       return searchMode.value === "museum";
     }
 
+    function isCollectionsSearchMode() {
+      return searchMode.value === "collections";
+    }
+
+    function exploreFieldLabel(field) {
+      return EXPLORE_FIELD_LABELS[field] || "all fields";
+    }
+
     function syncSearchFields() {
       const museumMode = isMuseumSearchMode();
+      const collectionsMode = isCollectionsSearchMode();
 
-      brandTitle.innerHTML = museumMode
-        ? `Chris's <em>"Where the F*** is my Object?"</em>`
-        : `V&amp;A <em>"What's on display in this Gallery?"</em>`;
+      searchFields.classList.toggle("is-collections", collectionsMode);
+      exploreFieldWrap.hidden = !collectionsMode;
 
-      keywordField.classList.toggle("is-hidden", museumMode);
-      galleryHint.hidden = museumMode;
+      if (collectionsMode) {
+        brandTitle.innerHTML = `V&amp;A <em>Explore the collection</em>`;
+        lede.textContent = LEDE_COPY.collections;
+        keywordField.classList.add("is-hidden");
+        galleryHint.hidden = true;
+
+        primarySearchLabel.textContent = "Search";
+        galleryInput.placeholder = "Search by object, artist, maker…";
+        keywordInput.disabled = true;
+        keywordInput.value = "";
+
+        const query = galleryInput.value.trim();
+        galleryInput.setCustomValidity(query ? "" : "Enter a search term.");
+        return;
+      }
 
       if (museumMode) {
+        brandTitle.innerHTML = `Chris's <em>"Where the F*** is my Object?"</em>`;
+        lede.textContent = LEDE_COPY.museum;
+        keywordField.classList.add("is-hidden");
+        galleryHint.hidden = true;
+
         primarySearchLabel.textContent = "Museum number";
         galleryInput.placeholder = "e.g. 54:1,2-2008 or full museum number";
         keywordInput.disabled = true;
@@ -1138,6 +1284,11 @@
         );
         return;
       }
+
+      brandTitle.innerHTML = `V&amp;A <em>"What's on display in this Gallery?"</em>`;
+      lede.textContent = LEDE_COPY.gallery;
+      keywordField.classList.remove("is-hidden");
+      galleryHint.hidden = false;
 
       primarySearchLabel.textContent = "Gallery number";
       galleryInput.placeholder = "e.g. 71";
@@ -1166,6 +1317,7 @@
       searchBtn.textContent = isLoading ? "Searching…" : "Search";
       galleryInput.disabled = isLoading;
       searchMode.disabled = isLoading;
+      exploreField.disabled = isLoading;
       if (isLoading) {
         keywordInput.disabled = true;
       } else {
@@ -1178,14 +1330,22 @@
       statusMessage.textContent = text || "";
     }
 
-    function goToPage(page) {
+    function goToPage(pageNum) {
       if (state.searchMode === "museum") {
+        return;
+      }
+      if (state.searchMode === "collections") {
+        searchCollections({
+          query: state.exploreQuery,
+          field: state.exploreField,
+          page: pageNum,
+        });
         return;
       }
       search({
         room: state.room,
         keyword: state.keyword,
-        page,
+        page: pageNum,
         galleryId: state.galleryId,
         galleryName: state.galleryName,
       });
@@ -1719,7 +1879,11 @@
         state.searchMode === "gallery" && state.galleryName
           ? ` in <span>${escapeHtml(state.galleryName)}</span>`
           : "";
-      resultsCount.innerHTML = `<span>${exact}${count.toLocaleString()}</span> objects${galleryLabel}`;
+      const collectionsLabel =
+        state.searchMode === "collections" && state.exploreQuery
+          ? ` for <span>${escapeHtml(state.exploreQuery)}</span> in ${escapeHtml(exploreFieldLabel(state.exploreField))}`
+          : "";
+      resultsCount.innerHTML = `<span>${exact}${count.toLocaleString()}</span> objects${galleryLabel}${collectionsLabel}`;
       resultsHead.classList.add("is-visible");
 
       state.pages = info.pages || 1;
@@ -1738,6 +1902,8 @@
       state = {
         searchMode: "gallery",
         museumQuery: null,
+        exploreField: "q",
+        exploreQuery: "",
         keyword: trimmedKeyword,
         room: parsedRoom,
         galleryId,
@@ -1872,6 +2038,100 @@
       });
     }
 
+    function buildExploreSearchParams(query, field, page) {
+      const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(PAGE_SIZE),
+        images_exist: "1",
+      });
+      params.set(field, query);
+      return params;
+    }
+
+    async function searchCollections({ query: raw, field = "q", page = 1 } = {}) {
+      const query = String(raw || "").trim();
+      const searchField = field || "q";
+
+      if (!query) {
+        syncSearchFields();
+        galleryInput.reportValidity();
+        return;
+      }
+
+      state = {
+        searchMode: "collections",
+        museumQuery: null,
+        exploreField: searchField,
+        exploreQuery: query,
+        keyword: "",
+        room: null,
+        galleryId: null,
+        galleryName: null,
+        page,
+        pages: 1,
+      };
+
+      galleryInput.value = query;
+      exploreField.value = searchField;
+      syncSearchFields();
+
+      resetResultsUi();
+      setLoading(true);
+      showStatus(
+        `Searching ${exploreFieldLabel(searchField)} for “${query}”…`
+      );
+
+      try {
+        let data = await fetchObjectSearch(
+          buildExploreSearchParams(query, searchField, page)
+        );
+        let records = data.records || [];
+        let info = data.info || {};
+
+        if (
+          !records.length &&
+          searchField === "kw_accession_number" &&
+          page === 1
+        ) {
+          data = await fetchObjectSearch({
+            page: "1",
+            page_size: String(MUSEUM_SEARCH_PAGE_SIZE),
+            images_exist: "1",
+            q: query,
+          });
+          records = recordsMatchingMuseumQuery(data.records, query);
+          info = {
+            ...(data.info || {}),
+            record_count: records.length,
+            record_count_exact: true,
+            pages: 1,
+          };
+        }
+
+        if (!records.length) {
+          showStatus(
+            `No objects with images matched “${query}” in ${exploreFieldLabel(searchField)}. Try another search.`
+          );
+          resultsCount.textContent = "";
+          return;
+        }
+
+        showStatus("");
+        await loadMapFloorsIndex();
+        renderRecords(records, info);
+
+        document.getElementById("resultsSection").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      } catch (error) {
+        console.error(error);
+        showStatus("Could not reach the V&A API. Check your connection and try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
     async function searchByMuseumNumber(raw) {
       const query = String(raw || "").trim();
       if (!query) {
@@ -1883,6 +2143,8 @@
       state = {
         searchMode: "museum",
         museumQuery: query,
+        exploreField: "q",
+        exploreQuery: "",
         keyword: "",
         room: null,
         galleryId: null,
@@ -1950,6 +2212,7 @@
     searchMode.addEventListener("change", () => {
       galleryInput.value = "";
       keywordInput.value = "";
+      exploreField.value = "q";
       clearSearchResults();
       syncSearchFields();
     });
@@ -1958,6 +2221,14 @@
       e.preventDefault();
       if (isMuseumSearchMode()) {
         searchByMuseumNumber(galleryInput.value);
+        return;
+      }
+      if (isCollectionsSearchMode()) {
+        searchCollections({
+          query: galleryInput.value,
+          field: exploreField.value,
+          page: 1,
+        });
         return;
       }
       search({
